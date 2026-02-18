@@ -13,25 +13,20 @@
     --font-street: 'Syncopate', sans-serif;
 }
 
-/* LIGHT THEME (MODE TERANG) */
+/* LIGHT THEME */
 body.light-theme {
     --bg-color: #f2f2f7;
     --card-bg: #ffffff;
     --text-main: #111111;
     --text-dim: #555555;
-    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-bg: rgba(255, 255, 255, 0.9);
     --border-color: rgba(0,0,0,0.1);
 }
 
 /* THEME ACCENTS */
 body.theme-man { --accent: #007AFF; }
 body.theme-woman { --accent: #FF2D55; }
-
-/* FIX BUG STREET MODE: Hapus override bg-color biar bisa ganti tema */
-body.theme-street { 
-    --accent: #30D158; 
-    /* DULU ADA --bg-color: #000; DISINI, SEKARANG DIHAPUS BIAR BISA JADI PUTIH */
-}
+body.theme-street { --accent: #30D158; }
 
 /* RESET */
 * { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -43,17 +38,75 @@ body {
     overflow-x: hidden; 
 }
 
-/* LOGO UTILS */
-.nav-logo, .loader-logo { 
+/* --- 2. LOADER (FIX TENGAH & KEDIP) --- */
+#loader {
+    position: fixed;
+    inset: 0; /* Full Screen */
+    background: var(--bg-color);
+    z-index: 9999;
+    display: flex; 
+    justify-content: center; /* Tengah Horizontal */
+    align-items: center; /* Tengah Vertikal */
+    flex-direction: column;
+}
+
+.loader-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo Loading: Animasi Berkedip */
+.loader-logo { 
+    height: 70px; 
+    width: auto; 
+    margin-bottom: 20px;
+    object-fit: contain;
+    animation: breathe 2s infinite ease-in-out; /* EFEK KEDIP */
+}
+
+/* Keyframes untuk efek kedip halus */
+@keyframes breathe {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.loading-bar { 
+    width: 150px; 
+    height: 2px; 
+    background: rgba(125,125,125,0.2); 
+    margin-top: 20px; 
+    overflow: hidden; 
+    border-radius: 2px;
+}
+.progress { 
+    width: 0%; 
+    height: 100%; 
+    background: var(--text-main); 
+    animation: load 1.5s forwards; 
+}
+@keyframes load { to { width: 100%; } }
+
+.fade-in-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+/* --- 3. NAV LOGO --- */
+.nav-logo { 
     height: 35px; 
     width: auto; 
     object-fit: contain;
-    transition: opacity 0.3s ease; /* Transisi halus pas ganti logo */
+    transition: opacity 0.3s ease;
 }
-.loader-logo { height: 60px; margin-bottom: 20px; }
 .fallback-logo { display: none; }
 
-/* NAVIGATION */
+/* --- 4. NAVIGATION --- */
 .glass-nav {
     position: fixed; top: 0; width: 100%; padding: 15px 40px;
     display: flex; justify-content: space-between; align-items: center;
@@ -81,7 +134,7 @@ body {
 }
 .segment-control button.active::after { width: 100%; }
 
-/* MAIN CONTENT */
+/* --- 5. MAIN CONTENT --- */
 main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hidden; min-height: 100vh; }
 #content-wrapper { width: 100%; position: relative; }
 
@@ -91,7 +144,7 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 }
 #hero-desc { margin-top: 10px; font-size: 1.2rem; color: var(--text-dim); }
 
-/* GRID SYSTEM */
+/* GRID PRODUCT */
 #grid-container {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;
 }
@@ -112,11 +165,10 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
     background-position: center; 
     background-repeat: no-repeat;
 }
-
 .card-meta h3 { color: var(--text-main); margin: 0; }
 .card-meta p { color: var(--text-dim); margin-top: 5px; font-size: 0.9rem; }
 
-/* ZK CHAT */
+/* --- 6. ZK CHAT --- */
 .zk-window { 
     background: var(--card-bg); color: var(--text-main);
     border-color: var(--border-color); border-radius: 18px; 
@@ -176,11 +228,6 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .menu-links a:hover { color: var(--text-main); transform: translateX(10px); }
 
 /* ANIMATIONS */
-#loader { position: fixed; inset: 0; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column;}
-.loading-bar { width: 150px; height: 2px; background: rgba(125,125,125,0.2); margin-top: 20px; overflow: hidden; }
-.progress { width: 0%; height: 100%; background: var(--text-main); animation: load 1.5s forwards; }
-@keyframes load { to { width: 100%; } }
-
 .slide-out-left { animation: slideOutLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 .slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 .slide-out-right { animation: slideOutRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
