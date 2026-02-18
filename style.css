@@ -1,4 +1,4 @@
-/* --- VARIABLES --- */
+/* --- 1. SETUP & VARIABLES --- */
 :root {
     --bg-color: #050505;
     --card-bg: #111;
@@ -13,38 +13,68 @@
     --font-street: 'Syncopate', sans-serif;
 }
 
-/* LIGHT THEME */
+/* LIGHT THEME (MODE TERANG) */
 body.light-theme {
-    --bg-color: #f2f2f7;
+    --bg-color: #f2f2f7; /* Abu-abu sangat muda ala Apple */
     --card-bg: #ffffff;
-    --text-main: #000000;
-    --text-dim: #666666;
-    --glass-bg: rgba(255, 255, 255, 0.9);
+    --text-main: #111111; /* Hitam Pekat */
+    --text-dim: #555555;
+    --glass-bg: rgba(255, 255, 255, 0.85);
     --border-color: rgba(0,0,0,0.1);
 }
 
-/* THEME ACCENTS */
+/* THEME ACCENTS (WARNA TOMBOL/GARIS) */
 body.theme-man { --accent: #007AFF; }
 body.theme-woman { --accent: #FF2D55; }
-body.theme-street { --accent: #30D158; --bg-color: #000; }
+body.theme-street { --accent: #30D158; --bg-color: #000; } /* Street tetap Dark Mode biar keren */
 
-* { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease; }
-body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-body); margin: 0; overflow-x: hidden; }
+/* RESET & TRANSISI HALUS */
+* { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease; }
+body { 
+    background-color: var(--bg-color); 
+    color: var(--text-main); 
+    font-family: var(--font-body); 
+    margin: 0; 
+    overflow-x: hidden; 
+}
 
-/* LOGO & UTILS */
-.nav-logo { height: 35px; width: auto; object-fit: contain; }
-.loader-logo { height: 60px; width: auto; margin-bottom: 20px; }
-.fallback-logo { display: none; font-family: var(--font-heading); letter-spacing: 5px; font-size: 2rem; }
+/* --- 2. LOGO FIX (MAGIC INVERT) --- */
+.nav-logo, .loader-logo { 
+    height: 35px; 
+    width: auto; 
+    object-fit: contain;
+    /* Default: Gak diapa-apain */
+    filter: none; 
+}
 
-/* NAV */
+.loader-logo { height: 60px; margin-bottom: 20px; }
+
+/* KALAU LIGHT MODE: Balik warna logo (Putih jadi Hitam) */
+body.light-theme .nav-logo, 
+body.light-theme .loader-logo {
+    filter: invert(1); 
+}
+
+/* Fallback Text kalau gambar rusak */
+.fallback-logo { display: none; font-family: var(--font-heading); letter-spacing: 5px; font-size: 2rem; color: var(--text-main); }
+
+/* --- 3. NAVIGATION --- */
 .glass-nav {
     position: fixed; top: 0; width: 100%; padding: 15px 40px;
     display: flex; justify-content: space-between; align-items: center;
     background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-color); z-index: 100;
 }
+
 .nav-actions { display: flex; gap: 20px; align-items: center; }
-.theme-toggle { background: none; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; }
+
+/* FIX WARNA ICON & TOMBOL */
+.theme-toggle, .menu-trigger { 
+    background: none; border: none; 
+    color: var(--text-main) !important; /* Paksa ikut warna teks utama */
+    font-size: 24px; cursor: pointer; 
+    display: flex; align-items: center;
+}
 
 /* SEGMENT BUTTONS */
 .segment-control button {
@@ -59,17 +89,19 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 }
 .segment-control button.active::after { width: 100%; }
 
-/* MAIN LAYOUT */
+/* --- 4. MAIN CONTENT --- */
 main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hidden; min-height: 100vh; }
 #content-wrapper { width: 100%; position: relative; }
 
+/* FIX WARNA JUDUL */
 #hero-title {
     font-family: var(--font-heading); font-size: 3.5rem; margin: 0; line-height: 1.1;
-    color: var(--text-main); letter-spacing: -1px;
+    color: var(--text-main); /* Pastikan ini var, bukan white */
+    letter-spacing: -1px;
 }
 #hero-desc { margin-top: 10px; font-size: 1.2rem; color: var(--text-dim); }
 
-/* GRID */
+/* GRID PRODUCT */
 #grid-container {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;
 }
@@ -80,90 +112,80 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 }
 .product-card:hover { transform: scale(1.02); border-color: var(--accent); }
 .card-img { height: 220px; background: #222; border-radius: 12px; margin-bottom: 15px; background-size: cover; background-position: center; }
+.card-meta h3 { color: var(--text-main); margin: 0; }
+.card-meta p { color: var(--text-dim); margin-top: 5px; font-size: 0.9rem; }
 
-/* --- ZK CHAT & FLOATING BUTTON (UPDATED) --- */
-.zk-window { background: var(--card-bg); color: var(--text-main); border-color: var(--border-color); border-radius: 18px; position: fixed; bottom: 110px; right: 30px; width: 320px; height: 400px; display: none; flex-direction: column; z-index: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+/* --- 5. ZK CHAT & FLOATING BUTTON --- */
+.zk-window { 
+    background: var(--card-bg); 
+    color: var(--text-main); /* Fix warna teks chat */
+    border-color: var(--border-color); 
+    border-radius: 18px; 
+    position: fixed; bottom: 110px; right: 30px; 
+    width: 320px; height: 400px; 
+    display: none; flex-direction: column; 
+    z-index: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+}
 .zk-window.active { display: flex; animation: fadeUp 0.3s ease; }
-.zk-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-weight: bold; }
+.zk-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-weight: bold; color: var(--text-main); }
 .zk-body { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; }
 .zk-input { display: flex; padding: 10px; border-top: 1px solid var(--border-color); }
 .zk-input input { flex: 1; background: transparent; border: none; color: var(--text-main); outline: none; }
 .zk-input button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; }
 
-/* Bagian Tombol Bulat ZK yang Baru */
+/* Tombol Bulat ZK */
 .zk-trigger { 
-    position: fixed; 
-    bottom: 30px; 
-    right: 30px; 
-    width: 65px; /* Lebih besar biar gambar jelas */
-    height: 65px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
-    z-index: 499;
-    background: var(--card-bg); /* Background ngikut tema (hitam/putih) */
-    border: 2px solid var(--accent); /* Lingkaran warna sesuai segmen */
-    overflow: hidden; /* Biar gambar gak keluar lingkaran */
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efek membal */
+    position: fixed; bottom: 30px; right: 30px; 
+    width: 65px; height: 65px; 
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+    cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 499;
+    background: var(--card-bg); 
+    border: 2px solid var(--accent);
+    overflow: hidden; transition: transform 0.3s;
 }
+.zk-trigger:hover { transform: scale(1.1) rotate(5deg); }
+.zk-trigger img { width: 70%; height: auto; object-fit: contain; }
 
-/* Efek saat mouse diarahkan ke tombol ZK */
-.zk-trigger:hover {
-    transform: scale(1.1) rotate(5deg);
-}
-
-/* Pengaturan Gambar di dalam Tombol ZK */
-.zk-trigger img {
-    width: 70%; /* Ukuran logo di dalam lingkaran */
-    height: auto;
-    object-fit: contain;
-    transition: opacity 0.3s ease;
-}
-
-/* MODAL */
+/* --- 6. MODAL & MENU --- */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 999; display: none; justify-content: center; align-items: center; }
 .modal-card { background: var(--card-bg); width: 90%; max-width: 900px; height: 80vh; border-radius: 24px; display: flex; overflow: hidden; border: 1px solid var(--border-color); position: relative; }
 .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
-.modal-split { display: flex; width: 100%; height: 100%; }
-.modal-visual, .modal-info { width: 50%; padding: 30px; }
-.modal-visual { background: #000; display: flex; align-items: center; justify-content: center; }
-.img-box { width: 100%; height: 100%; background: #333; background-size: cover; background-position: center; border-radius: 12px; }
-.modal-info { overflow-y: auto; }
-.bar-track { width: 100%; background: #333; height: 4px; border-radius: 2px; margin-top: 5px; }
-.bar-fill { height: 100%; background: var(--text-main); width: 0%; transition: width 1s ease; }
-.stat-row { margin-bottom: 15px; } .stat-label { display: flex; justify-content: space-between; font-size: 0.8rem; }
-.ai-note { margin-top: 20px; padding: 15px; background: rgba(125,125,125,0.1); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 0.9rem; }
+.modal-visual { background: #000; display: flex; align-items: center; justify-content: center; width: 50%; padding: 30px; }
+.modal-info { width: 50%; padding: 30px; overflow-y: auto; color: var(--text-main); } /* Fix Text Color Modal */
 
-/* MENU */
+.img-box { width: 100%; height: 100%; background: #333; background-size: cover; background-position: center; border-radius: 12px; }
+#modal-name { color: var(--text-main); margin-top: 0; }
+#modal-desc { color: var(--text-dim); }
+
+.bar-track { width: 100%; background: rgba(125,125,125,0.2); height: 4px; border-radius: 2px; margin-top: 5px; }
+.bar-fill { height: 100%; background: var(--text-main); width: 0%; transition: width 1s ease; } /* Bar ikut warna teks */
+
+/* MENU LAYER */
 .menu-layer { position: fixed; inset: 0; background: var(--bg-color); z-index: 2000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
 .menu-layer.active { transform: translateY(0); }
 .menu-content { text-align: center; }
-.close-menu-btn { position: absolute; top: 30px; right: 30px; font-size: 32px; cursor: pointer; }
+.close-menu-btn { position: absolute; top: 30px; right: 30px; font-size: 32px; cursor: pointer; color: var(--text-main); }
 .menu-links a { display: block; font-family: var(--font-heading); font-size: 2.5rem; color: var(--text-dim); text-decoration: none; margin: 15px 0; transition: 0.3s; }
 .menu-links a:hover { color: var(--text-main); transform: translateX(10px); }
 
-/* PRELOADER */
+/* --- 7. PRELOADER --- */
 #loader { position: fixed; inset: 0; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column;}
-.loading-bar { width: 150px; height: 2px; background: #333; margin-top: 20px; overflow: hidden; }
+.loading-bar { width: 150px; height: 2px; background: rgba(125,125,125,0.2); margin-top: 20px; overflow: hidden; }
 .progress { width: 0%; height: 100%; background: var(--text-main); animation: load 1.5s forwards; }
 @keyframes load { to { width: 100%; } }
 
-/* ANIMATIONS (APPLE FLOW) */
+/* ANIMATIONS */
 .slide-out-left { animation: slideOutLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 .slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 .slide-out-right { animation: slideOutRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 .slide-in-left { animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.stagger-item { opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes slideOutLeft { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-50px); } }
 @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(50px); } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-.stagger-item { opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 /* Responsive */
 @media (max-width: 768px) {
