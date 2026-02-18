@@ -1,16 +1,12 @@
-// --- 1. CONFIG: LINK GAMBAR GOOGLE DRIVE (DIRECT) ---
-// Link ini sudah saya convert biar bisa dibaca browser. JANGAN DIUBAH.
-const imgParfum = "https://drive.google.com/uc?export=view&id=1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
+// --- 1. LINK GAMBAR (JALUR KHUSUS / PROXY) ---
+// Link ini udah gw convert biar tembus blokiran Google Drive baru
+const imgParfum = "https://lh3.googleusercontent.com/d/1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr"; // Botol Hitam
+const imgLogoWhite = "https://lh3.googleusercontent.com/d/1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Logo ZETKA Putih
+const imgLogoBlack = "https://lh3.googleusercontent.com/d/1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Logo ZETKA Hitam
+const imgAiWhite = "https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // AI Putih
+const imgAiBlack = "https://lh3.googleusercontent.com/d/1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // AI Hitam
 
-// Logo ZETKA (Navigasi)
-const imgLogoWhite = "https://drive.google.com/uc?export=view&id=1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Utk Dark Mode
-const imgLogoBlack = "https://drive.google.com/uc?export=view&id=1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Utk Light Mode
-
-// Logo AI (Mr. ZK)
-const imgAiWhite = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Utk Dark Mode
-const imgAiBlack = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // Utk Light Mode
-
-// --- 2. DATABASE PARFUM (METADATA) ---
+// --- 2. DATABASE PARFUM ---
 const products = [
     { 
         id: 'm1', name: "ZETKA ALPHA", segment: "man", 
@@ -58,7 +54,7 @@ const products = [
 
 const segIndex = { 'man': 0, 'woman': 1, 'street': 2 };
 
-// --- 3. KAMUS GAUL (SLANG) ---
+// --- 3. KAMUS GAUL ---
 const slangDict = {
     "gw": "saya", "aku": "saya", "gue": "saya", "gua": "saya", "i": "saya",
     "lo": "anda", "lu": "anda", "u": "anda", "you": "anda",
@@ -81,16 +77,12 @@ const app = {
         const savedTheme = localStorage.getItem('theme');
         const isLight = savedTheme === 'light';
         
-        // Apply Tema Awal
         if(isLight) {
             document.body.classList.add('light-theme');
             document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
         }
         
-        // Set Logo Awal
         zk.updateLogo(isLight);
-
-        // Matikan Loader
         setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
         app.renderContent('man', false);
     },
@@ -140,7 +132,6 @@ const app = {
             if(animateItems) card.style.animationDelay = `${idx * 0.1}s`; 
             if(animateItems) card.classList.add('stagger-item');
             
-            // PAKSA GAMBAR PARFUM SAMPLE
             card.innerHTML = `
                 <div class="card-img" style="background-image: url('${imgParfum}');"></div>
                 <div class="card-meta"><h3>${p.name}</h3><p>${p.desc}</p></div>
@@ -169,8 +160,6 @@ const ui = {
         }
         
         body.className = `theme-${app.currentSeg} ${isLight ? 'light-theme' : ''}`;
-        
-        // TRIGGER GANTI LOGO
         zk.updateLogo(isLight);
     },
 
@@ -181,8 +170,6 @@ const ui = {
         document.getElementById('modal-desc').innerText = p.desc;
         document.getElementById('modal-seg-tag').innerText = p.segment.toUpperCase();
         document.getElementById('modal-zk-note').innerText = p.zkReason;
-        
-        // GAMBAR MODAL
         document.getElementById('modal-img-placeholder').style.backgroundImage = `url('${imgParfum}')`;
         
         ['long','sillage','unique'].forEach(k => document.getElementById(`bar-${k}`).style.width = '0%');
@@ -198,11 +185,10 @@ const ui = {
     closeModal: () => document.getElementById('product-modal').style.display = 'none'
 };
 
-// --- 6. MR. ZK INTELLIGENCE (AI) ---
+// --- 6. MR. ZK INTELLIGENCE ---
 const zk = {
     isOpen: false,
     
-    // LOGIC TUKAR GAMBAR LOGO OTOMATIS
     updateLogo: (isLight) => {
         const navLogo = document.getElementById('nav-logo-img');
         if(navLogo) navLogo.src = isLight ? imgLogoBlack : imgLogoWhite;
@@ -273,7 +259,7 @@ const zk = {
             query = query.replace(regex, slangDict[slang]);
         });
 
-        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada referensi wangi yang dicari? Misal: 'Buat ngedate' atau 'wangi kayu'?";
+        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada yang bisa saya bantu carikan?";
         if (query.includes('makasih') || query.includes('thx')) return "Siap, sama-sama! Stay fresh.";
 
         const activeProducts = products.filter(p => p.segment === app.currentSeg);
@@ -297,7 +283,6 @@ const zk = {
     }
 };
 
-// Start
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
