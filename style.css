@@ -81,15 +81,47 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .product-card:hover { transform: scale(1.02); border-color: var(--accent); }
 .card-img { height: 220px; background: #222; border-radius: 12px; margin-bottom: 15px; background-size: cover; background-position: center; }
 
-/* ZK CHAT */
-.zk-window { background: var(--card-bg); color: var(--text-main); border-color: var(--border-color); border-radius: 18px; position: fixed; bottom: 90px; right: 30px; width: 320px; height: 400px; display: none; flex-direction: column; z-index: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+/* --- ZK CHAT & FLOATING BUTTON (UPDATED) --- */
+.zk-window { background: var(--card-bg); color: var(--text-main); border-color: var(--border-color); border-radius: 18px; position: fixed; bottom: 110px; right: 30px; width: 320px; height: 400px; display: none; flex-direction: column; z-index: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 .zk-window.active { display: flex; animation: fadeUp 0.3s ease; }
 .zk-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-weight: bold; }
 .zk-body { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; }
 .zk-input { display: flex; padding: 10px; border-top: 1px solid var(--border-color); }
 .zk-input input { flex: 1; background: transparent; border: none; color: var(--text-main); outline: none; }
 .zk-input button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; }
-.zk-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--text-main); color: var(--bg-color); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 499;}
+
+/* Bagian Tombol Bulat ZK yang Baru */
+.zk-trigger { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    width: 65px; /* Lebih besar biar gambar jelas */
+    height: 65px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+    z-index: 499;
+    background: var(--card-bg); /* Background ngikut tema (hitam/putih) */
+    border: 2px solid var(--accent); /* Lingkaran warna sesuai segmen */
+    overflow: hidden; /* Biar gambar gak keluar lingkaran */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efek membal */
+}
+
+/* Efek saat mouse diarahkan ke tombol ZK */
+.zk-trigger:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Pengaturan Gambar di dalam Tombol ZK */
+.zk-trigger img {
+    width: 70%; /* Ukuran logo di dalam lingkaran */
+    height: auto;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+}
 
 /* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 999; display: none; justify-content: center; align-items: center; }
