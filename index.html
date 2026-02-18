@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZETKA PARFUME - The Invisible Signature">
+    <title>ZETKA | AI-Driven Scent</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-content">
+            <h1 class="glitch-text" data-text="ZETKA">ZETKA</h1>
+            <p class="fade-in-text">"Scent is the only invisible access to the past."</p>
+            <div class="loading-bar"><div class="progress"></div></div>
+        </div>
+    </div>
+
+    <nav class="glass-nav">
+        <div class="logo">ZETKA<span class="dot">.</span></div>
+        
+        <div class="segment-control">
+            <button onclick="app.setSegment('man')" id="btn-man" class="active">MAN</button>
+            <button onclick="app.setSegment('woman')" id="btn-woman">WOMAN</button>
+            <button onclick="app.setSegment('street')" id="btn-street">STREET</button>
+        </div>
+
+        <div class="menu-trigger" onclick="ui.toggleMenu()">
+            <i class="ph ph-list"></i>
+        </div>
+    </nav>
+
+    <main>
+        <header id="segment-hero">
+            <h2 id="hero-title">PROFESSIONAL<br>COLLECTION</h2>
+            <p id="hero-desc">Curated for the modern gentleman.</p>
+        </header>
+
+        <section id="grid-container">
+            </section>
+    </main>
+
+    <div class="zk-wrapper">
+        <div id="zk-interface" class="zk-window glass-panel">
+            <div class="zk-header">
+                <span>Mr. ZK (Beta)</span>
+                <i class="ph ph-x" onclick="zk.toggle()"></i>
+            </div>
+            <div class="zk-body" id="zk-chat-log">
+                <div class="msg bot">
+                    <p>Halo, saya ZK. Saya membaca Anda sedang melihat koleksi <span id="zk-current-seg">MAN</span>. Ada preferensi notes? (Misal: Woody, Fresh, Spicy)</p>
+                </div>
+            </div>
+            <div class="zk-input">
+                <input type="text" id="user-input" placeholder="Ketik preferensi..." onkeypress="zk.handleEnter(event)">
+                <button onclick="zk.sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
+            </div>
+        </div>
+
+        <div class="zk-trigger" onclick="zk.toggle()">
+            <span class="zk-icon">ZK</span>
+            <span class="status-dot"></span>
+        </div>
+    </div>
+
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-card glass-panel">
+            <button class="close-modal" onclick="ui.closeModal()"><i class="ph ph-x"></i></button>
+            
+            <div class="modal-split">
+                <div class="modal-visual">
+                    <div id="modal-img-placeholder" class="img-box"></div>
+                </div>
+                
+                <div class="modal-info">
+                    <small id="modal-seg-tag">MAN COLLECTION</small>
+                    <h1 id="modal-name">ZETKA ALPHA</h1>
+                    <p id="modal-desc">Deskripsi parfum yang detail...</p>
+                    
+                    <div class="nft-stats">
+                        <h3>Scent Properties</h3>
+                        
+                        <div class="stat-row">
+                            <div class="stat-label">
+                                <span>Longevity</span>
+                                <span id="val-long">8h</span>
+                            </div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-long"></div></div>
+                        </div>
+
+                        <div class="stat-row">
+                            <div class="stat-label">
+                                <span>Sillage (Projection)</span>
+                                <span id="val-sillage">2m</span>
+                            </div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-sillage"></div></div>
+                        </div>
+
+                        <div class="stat-row">
+                            <div class="stat-label">
+                                <span>Uniqueness</span>
+                                <span id="val-unique">90%</span>
+                            </div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-unique"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="ai-note">
+                        <i class="ph ph-sparkle"></i>
+                        <span id="modal-zk-note">ZK Analysis: Cocok untuk meeting.</span>
+                    </div>
+
+                    <button class="buy-btn">GET THIS SCENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-menu" class="menu-layer">
+        <div class="menu-content">
+            <div class="menu-header">
+                <h2>ZETKA.</h2>
+                <i class="ph ph-x" onclick="ui.toggleMenu()"></i>
+            </div>
+            
+            <div class="menu-links">
+                <a href="#">Philosophy</a>
+                <a href="#">Scent Library (Global)</a>
+                <a href="#">The Team</a>
+                <a href="#">Contact</a>
+            </div>
+
+            <div class="menu-footer">
+                <p>Designed by Bos Zen.</p>
+                <p>© 2026 Zetka Parfume.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
