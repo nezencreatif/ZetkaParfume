@@ -13,7 +13,7 @@
     --font-street: 'Syncopate', sans-serif;
 }
 
-/* LIGHT THEME (MODE TERANG) */
+/* LIGHT THEME */
 body.light-theme {
     --bg-color: #f2f2f7;
     --card-bg: #ffffff;
@@ -28,7 +28,6 @@ body.theme-man { --accent: #007AFF; }
 body.theme-woman { --accent: #FF2D55; }
 body.theme-street { --accent: #30D158; --bg-color: #000; }
 
-/* RESET & TRANSISI HALUS */
 * { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease; }
 body { 
     background-color: var(--bg-color); 
@@ -38,26 +37,18 @@ body {
     overflow-x: hidden; 
 }
 
-/* --- 2. LOGO --- */
+/* LOGO */
 .nav-logo, .loader-logo { 
     height: 35px; 
     width: auto; 
     object-fit: contain;
-    /* Trik agar logo putih berubah hitam di background terang */
-    transition: filter 0.3s ease;
+    /* Tidak perlu filter invert lagi, karena gambar diganti script */
 }
 
 .loader-logo { height: 60px; margin-bottom: 20px; }
-
-/* INVERT LOGO SAAT LIGHT MODE */
-body.light-theme .nav-logo, 
-body.light-theme .loader-logo {
-    filter: invert(1); 
-}
-
 .fallback-logo { display: none; font-family: var(--font-heading); letter-spacing: 5px; font-size: 2rem; color: var(--text-main); }
 
-/* --- 3. NAVIGATION --- */
+/* NAVIGATION */
 .glass-nav {
     position: fixed; top: 0; width: 100%; padding: 15px 40px;
     display: flex; justify-content: space-between; align-items: center;
@@ -67,7 +58,6 @@ body.light-theme .loader-logo {
 
 .nav-actions { display: flex; gap: 20px; align-items: center; }
 
-/* FIX WARNA ICON & TOMBOL */
 .theme-toggle, .menu-trigger { 
     background: none; border: none; 
     color: var(--text-main) !important;
@@ -88,14 +78,13 @@ body.light-theme .loader-logo {
 }
 .segment-control button.active::after { width: 100%; }
 
-/* --- 4. MAIN CONTENT --- */
+/* MAIN CONTENT */
 main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hidden; min-height: 100vh; }
 #content-wrapper { width: 100%; position: relative; }
 
 #hero-title {
     font-family: var(--font-heading); font-size: 3.5rem; margin: 0; line-height: 1.1;
-    color: var(--text-main);
-    letter-spacing: -1px;
+    color: var(--text-main); letter-spacing: -1px;
 }
 #hero-desc { margin-top: 10px; font-size: 1.2rem; color: var(--text-dim); }
 
@@ -110,7 +99,6 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 }
 .product-card:hover { transform: scale(1.02); border-color: var(--accent); }
 
-/* SETTING GAMBAR KARTU AGAR FULL DAN TIDAK RUSAK */
 .card-img { 
     height: 220px; 
     background-color: #222; 
@@ -124,7 +112,7 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .card-meta h3 { color: var(--text-main); margin: 0; }
 .card-meta p { color: var(--text-dim); margin-top: 5px; font-size: 0.9rem; }
 
-/* --- 5. ZK CHAT & FLOATING BUTTON --- */
+/* ZK CHAT & FLOATING BUTTON */
 .zk-window { 
     background: var(--card-bg); 
     color: var(--text-main);
@@ -142,7 +130,6 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .zk-input input { flex: 1; background: transparent; border: none; color: var(--text-main); outline: none; }
 .zk-input button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; }
 
-/* Tombol Bulat ZK */
 .zk-trigger { 
     position: fixed; bottom: 30px; right: 30px; 
     width: 65px; height: 65px; 
@@ -155,7 +142,7 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .zk-trigger:hover { transform: scale(1.1) rotate(5deg); }
 .zk-trigger img { width: 70%; height: auto; object-fit: contain; }
 
-/* --- 6. MODAL & MENU --- */
+/* MODAL & MENU */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 999; display: none; justify-content: center; align-items: center; }
 .modal-card { background: var(--card-bg); width: 90%; max-width: 900px; height: 80vh; border-radius: 24px; display: flex; overflow: hidden; border: 1px solid var(--border-color); position: relative; }
 .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
@@ -182,7 +169,6 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .stat-row { margin-bottom: 15px; } .stat-label { display: flex; justify-content: space-between; font-size: 0.8rem; }
 .ai-note { margin-top: 20px; padding: 15px; background: rgba(125,125,125,0.1); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 0.9rem; }
 
-/* MENU LAYER */
 .menu-layer { position: fixed; inset: 0; background: var(--bg-color); z-index: 2000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
 .menu-layer.active { transform: translateY(0); }
 .menu-content { text-align: center; }
@@ -190,7 +176,7 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 .menu-links a { display: block; font-family: var(--font-heading); font-size: 2.5rem; color: var(--text-dim); text-decoration: none; margin: 15px 0; transition: 0.3s; }
 .menu-links a:hover { color: var(--text-main); transform: translateX(10px); }
 
-/* --- 7. PRELOADER & ANIMATIONS --- */
+/* PRELOADER & ANIMATIONS */
 #loader { position: fixed; inset: 0; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column;}
 .loading-bar { width: 150px; height: 2px; background: rgba(125,125,125,0.2); margin-top: 20px; overflow: hidden; }
 .progress { width: 0%; height: 100%; background: var(--text-main); animation: load 1.5s forwards; }
@@ -208,7 +194,6 @@ main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hi
 @keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(50px); } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Responsive */
 @media (max-width: 768px) {
     .modal-split { flex-direction: column; }
     .modal-visual, .modal-info { width: 100%; }
