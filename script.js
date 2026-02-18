@@ -1,4 +1,10 @@
-// --- 1. DATABASE PARFUM (DATA REAL + LINK DRIVE) ---
+// --- 1. LINK GAMBAR (DIRECT GOOGLE DRIVE LINKS) ---
+// Pastikan link ini tidak diubah-ubah formatnya
+const imgParfum = "https://drive.google.com/uc?export=view&id=1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
+const imgZkLight = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Logo AI Hitam
+const imgZkDark = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl";  // Logo AI Putih
+
+// --- 2. DATABASE PARFUM (METADATA LENGKAP) ---
 const products = [
     // MAN
     { 
@@ -49,12 +55,7 @@ const products = [
 
 const segIndex = { 'man': 0, 'woman': 1, 'street': 2 };
 
-// LINK GAMBAR DARI DRIVE (DIRECT LINK)
-const imgParfum = "https://drive.google.com/uc?export=view&id=1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
-const imgZkLight = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Logo Hitam (Utk background putih)
-const imgZkDark = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl";  // Logo Putih (Utk background hitam)
-
-// --- 2. KAMUS GAUL (SLANG) ---
+// --- 3. KAMUS GAUL (SLANG DICTIONARY) ---
 const slangDict = {
     "gw": "saya", "aku": "saya", "gue": "saya", "gua": "saya", "i": "saya",
     "lo": "anda", "lu": "anda", "u": "anda", "you": "anda",
@@ -68,19 +69,26 @@ const slangDict = {
     "pacaran": "date", "kencan": "date", "jalan": "date"
 };
 
-// --- 3. APP LOGIC ---
+// --- 4. APP LOGIC ---
 const app = {
     currentSeg: 'man',
     isAnimating: false,
 
     init: () => {
+        // Cek Tema Tersimpan
         const savedTheme = localStorage.getItem('theme');
         if(savedTheme === 'light') {
             document.body.classList.add('light-theme');
             document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
         }
+        
+        // Update Logo AI
         zk.updateLogo(savedTheme === 'light');
+
+        // Hapus Loader
         setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
+        
+        // Render Awal
         app.renderContent('man', false);
     },
 
@@ -130,7 +138,7 @@ const app = {
             if(animateItems) card.style.animationDelay = `${idx * 0.1}s`; 
             if(animateItems) card.classList.add('stagger-item');
             
-            // PAKE LINK DRIVE UNTUK GAMBAR
+            // PAKSA PAKE GAMBAR DARI LINK DRIVE
             card.innerHTML = `
                 <div class="card-img" style="background-image: url('${imgParfum}'), linear-gradient(45deg, #1a1a1a, #333)"></div>
                 <div class="card-meta"><h3>${p.name}</h3><p>${p.desc}</p></div>
@@ -142,7 +150,7 @@ const app = {
     }
 };
 
-// --- 4. UI CONTROLLER ---
+// --- 5. UI CONTROLLER ---
 const ui = {
     toggleTheme: () => {
         const body = document.body;
@@ -170,7 +178,7 @@ const ui = {
         document.getElementById('modal-seg-tag').innerText = p.segment.toUpperCase();
         document.getElementById('modal-zk-note').innerText = p.zkReason;
         
-        // Modal Gambar Botol Hitam (Drive Link)
+        // GAMBAR MODAL DARI DRIVE
         document.getElementById('modal-img-placeholder').style.backgroundImage = `url('${imgParfum}'), linear-gradient(45deg, #1a1a1a, #333)`;
         
         ['long','sillage','unique'].forEach(k => document.getElementById(`bar-${k}`).style.width = '0%');
@@ -186,7 +194,7 @@ const ui = {
     closeModal: () => document.getElementById('product-modal').style.display = 'none'
 };
 
-// --- 5. MR. ZK INTELLIGENCE (AI LOGIC) ---
+// --- 6. MR. ZK INTELLIGENCE (AI LOGIC) ---
 const zk = {
     isOpen: false,
     
@@ -214,6 +222,7 @@ const zk = {
         if(!log) return;
         if(!silent) log.innerHTML = '';
         
+        // Persona Greeting
         let intro = "";
         if (app.currentSeg === 'street') intro = "Yo, Whats up? Masuk mode Street nih. Cari scent yang 'rebel' atau buat 'party'?";
         else if (app.currentSeg === 'man') intro = "Good day, Sir. Mr. ZK at your service. Butuh saran untuk Meeting atau Daily?";
@@ -254,18 +263,18 @@ const zk = {
     },
 
     processQuery: (rawQuery) => {
-        // 1. Normalisasi Bahasa Gaul
+        // Normalisasi Slang
         let query = rawQuery;
         Object.keys(slangDict).forEach(slang => {
             const regex = new RegExp(`\\b${slang}\\b`, 'gi');
             query = query.replace(regex, slangDict[slang]);
         });
 
-        // 2. Basa-basi
+        // Basa-basi check
         if (query.includes('halo') || query.includes('hi')) return "Halo! Ada referensi wangi yang dicari? Misal: 'Buat ngedate' atau 'wangi kayu'?";
         if (query.includes('makasih') || query.includes('thx')) return "Siap, sama-sama! Stay fresh.";
 
-        // 3. Filter & Scoring
+        // Matching Logic
         const activeProducts = products.filter(p => p.segment === app.currentSeg);
         let bestMatch = null;
         let highestScore = 0;
