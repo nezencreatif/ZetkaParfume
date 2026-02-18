@@ -1,220 +1,141 @@
-// --- 1. DATABASE PARFUM (THE SCENT LIBRARY) ---
-const products = [
-    // === MAN SEGMENT ===
-    {
-        id: 'm1', name: "ZETKA ALPHA", segment: "man",
-        desc: "Dominasi dalam botol. Perpaduan Oud dan Leather yang menciptakan aura pemimpin.",
-        stats: { longevity: 90, sillage: 80, unique: 70 },
-        zkNote: "Best seller untuk Business Meeting. Aura wibawa sangat kuat.",
-        tags: ["woody", "leather", "strong"]
-    },
-    {
-        id: 'm2', name: "BLUE HORIZON", segment: "man",
-        desc: "Kesegaran laut dalam dengan sentuhan Citrus Italia.",
-        stats: { longevity: 60, sillage: 70, unique: 50 },
-        zkNote: "Sangat aman untuk Daily Office atau Gym. Tidak menyengat.",
-        tags: ["fresh", "citrus", "ocean"]
-    },
+/* --- 1. SETUP & VARIABLES --- */
+:root {
+    --bg-color: #050505;
+    --card-bg: #111;
+    --text-main: #ffffff;
+    --text-dim: #888888;
+    --glass-bg: rgba(5, 5, 5, 0.7);
+    --border-color: rgba(255,255,255,0.1);
+    --accent: #4a90e2; 
+    
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-street: 'Syncopate', sans-serif;
+}
 
-    // === WOMAN SEGMENT ===
-    {
-        id: 'w1', name: "VELVET ROSE", segment: "woman",
-        desc: "Mawar hitam yang misterius dengan base Vanilla Madagascar.",
-        stats: { longevity: 85, sillage: 90, unique: 80 },
-        zkNote: "Pilihan tepat untuk Date Night. Sangat seductive.",
-        tags: ["floral", "sweet", "romantic"]
-    },
-    {
-        id: 'w2', name: "PURE BLANC", segment: "woman",
-        desc: "Wangi linen bersih dan White Musk. Minimalis dan elegan.",
-        stats: { longevity: 50, sillage: 40, unique: 60 },
-        zkNote: "Clean girl aesthetic. Cocok untuk acara formal siang hari.",
-        tags: ["fresh", "clean", "musk"]
-    },
+/* LIGHT THEME */
+body.light-theme {
+    --bg-color: #f2f2f7; /* iOS Light Gray */
+    --card-bg: #ffffff;
+    --text-main: #000000;
+    --text-dim: #666666;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(0,0,0,0.1);
+}
 
-    // === STREET SEGMENT (GEN Z / EDGY) ===
-    {
-        id: 's1', name: "NEON DUST", segment: "street",
-        desc: "Aroma aspal basah bercampur metallic mint. Future classic.",
-        stats: { longevity: 70, sillage: 80, unique: 95 },
-        zkNote: "WARNING: Bukan untuk semua orang. Sangat artsy & niche.",
-        tags: ["metallic", "unique", "edgy"]
-    },
-    {
-        id: 's2', name: "BUBBLEGUM HAZE", segment: "street",
-        desc: "Manis sintetis yang rebel. Tembakau manis dan permen karet.",
-        stats: { longevity: 80, sillage: 90, unique: 85 },
-        zkNote: "Party monster. Dijamin dilirik orang saat lewat.",
-        tags: ["sweet", "tobacco", "party"]
-    }
-];
+/* THEME ACCENTS */
+body.theme-man { --accent: #007AFF; } /* iOS Blue */
+body.theme-woman { --accent: #FF2D55; } /* iOS Pink/Red */
+body.theme-street { --accent: #30D158; --bg-color: #000; } /* iOS Green */
 
-// --- 2. CORE APP LOGIC ---
-const app = {
-    currentSeg: 'man',
+* { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease; }
+body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-body); margin: 0; overflow-x: hidden; }
 
-    init: () => {
-        // Preloader remover
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-        }, 2000);
+/* LOGO */
+.nav-logo { height: 28px; width: auto; }
+.loader-logo { height: 60px; width: auto; margin-bottom: 20px; }
 
-        app.renderGrid();
-    },
+/* NAV */
+.glass-nav {
+    position: fixed; top: 0; width: 100%; padding: 15px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color); z-index: 100;
+}
+.nav-actions { display: flex; gap: 20px; align-items: center; }
+.theme-toggle { background: none; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; padding: 5px; }
 
-    setSegment: (seg) => {
-        app.currentSeg = seg;
-        
-        // 1. Update UI Buttons
-        document.querySelectorAll('.segment-control button').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-${seg}`).classList.add('active');
+/* SEGMENT BUTTONS */
+.segment-control button {
+    background: none; border: none; color: var(--text-dim);
+    font-family: var(--font-heading); font-weight: 600; font-size: 0.85rem;
+    margin: 0 10px; cursor: pointer; position: relative; padding-bottom: 5px;
+}
+.segment-control button.active { color: var(--text-main); }
+/* Garis bawah animasi */
+.segment-control button::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
+    background: var(--accent); transition: 0.3s ease; transform: translateX(-50%);
+}
+.segment-control button.active::after { width: 100%; }
 
-        // 2. Update Theme (Body Class)
-        document.body.className = `theme-${seg}`;
+/* CONTENT & ANIMATION CONTAINER */
+main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hidden; }
+#content-wrapper { width: 100%; }
 
-        // 3. Update Text Hero
-        const titles = {
-            man: "PROFESSIONAL<br>COLLECTION",
-            woman: "ELEGANCE<br>REDEFINED",
-            street: "URBAN<br>GLITCH_MODE"
-        };
-        const descs = {
-            man: "Curated for the modern gentleman.",
-            woman: "Scent that whispers class.",
-            street: "Break the rules. Smell distinct."
-        };
-        
-        document.getElementById('hero-title').innerHTML = titles[seg];
-        document.getElementById('hero-desc').innerText = descs[seg];
+/* HERO */
+#hero-title {
+    font-family: var(--font-heading); font-size: 3.5rem; margin: 0; line-height: 1.1;
+    color: var(--text-main); letter-spacing: -1px;
+}
 
-        // 4. Update Mr. ZK Context
-        document.getElementById('zk-current-seg').innerText = seg.toUpperCase();
+/* GRID */
+#grid-container {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;
+}
+.product-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 16px; padding: 15px; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s ease;
+}
+.product-card:hover { transform: scale(1.02); border-color: var(--accent); }
+.card-img { height: 220px; background: #222; border-radius: 12px; margin-bottom: 15px; background-size: cover; background-position: center; }
 
-        // 5. Re-render Grid
-        app.renderGrid();
-    },
+/* ZK & MODAL (Standard) */
+.zk-window { background: var(--card-bg); color: var(--text-main); border-color: var(--border-color); border-radius: 18px; }
+.zk-trigger { background: var(--text-main); color: var(--bg-color); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 999; display: none; justify-content: center; align-items: center; }
+.modal-card { background: var(--card-bg); width: 90%; max-width: 900px; height: 80vh; border-radius: 24px; display: flex; overflow: hidden; border: 1px solid var(--border-color); position: relative; }
+.close-modal { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
 
-    renderGrid: () => {
-        const grid = document.getElementById('grid-container');
-        grid.innerHTML = ''; // Clear
+/* --- APPLE FLOW ANIMATIONS (THE MAGIC) --- */
 
-        const filtered = products.filter(p => p.segment === app.currentSeg);
+/* Base state */
+.flow-animate {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); /* iOS Smooth Curve */
+    animation-fill-mode: forwards;
+}
 
-        filtered.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <div class="card-img"></div>
-                <div class="card-meta">
-                    <h3>${p.name}</h3>
-                    <p>${p.desc.substring(0, 50)}...</p>
-                </div>
-            `;
-            card.onclick = () => ui.openModal(p);
-            grid.appendChild(card);
-        });
-    }
-};
+/* Slide KIRI (Masuk dari kanan, Keluar ke kiri) */
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes slideOutLeft {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(-50px) scale(0.95); }
+}
 
-// --- 3. UI CONTROLLER ---
-const ui = {
-    toggleMenu: () => {
-        document.getElementById('main-menu').classList.toggle('active');
-    },
+/* Slide KANAN (Masuk dari kiri, Keluar ke kanan) */
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(50px) scale(0.95); }
+}
 
-    openModal: (product) => {
-        const modal = document.getElementById('product-modal');
-        
-        // Populate Data
-        document.getElementById('modal-name').innerText = product.name;
-        document.getElementById('modal-desc').innerText = product.desc;
-        document.getElementById('modal-seg-tag').innerText = product.segment.toUpperCase() + " SERIES";
-        document.getElementById('modal-zk-note').innerText = `ZK Analysis: ${product.zkNote}`;
+/* Helper Classes */
+.slide-in-right { animation-name: slideInRight; }
+.slide-out-left { animation-name: slideOutLeft; }
+.slide-in-left { animation-name: slideInLeft; }
+.slide-out-right { animation-name: slideOutRight; }
 
-        // Reset Bars first (for animation effect)
-        document.getElementById('bar-long').style.width = '0%';
-        document.getElementById('bar-sillage').style.width = '0%';
-        document.getElementById('bar-unique').style.width = '0%';
+/* Stagger item muncul satu-satu */
+.stagger-item {
+    opacity: 0;
+    animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        // Show Modal
-        modal.style.display = 'flex';
-
-        // Animate Bars after small delay
-        setTimeout(() => {
-            document.getElementById('bar-long').style.width = product.stats.longevity + '%';
-            document.getElementById('bar-sillage').style.width = product.stats.sillage + '%';
-            document.getElementById('bar-unique').style.width = product.stats.unique + '%';
-            
-            // Set text values
-            document.getElementById('val-long').innerText = product.stats.longevity + '/100';
-            document.getElementById('val-sillage').innerText = product.stats.sillage + '/100';
-            document.getElementById('val-unique').innerText = product.stats.unique + '%';
-        }, 100);
-    },
-
-    closeModal: () => {
-        document.getElementById('product-modal').style.display = 'none';
-    }
-};
-
-// --- 4. MR. ZK (AI LOGIC) ---
-const zk = {
-    isOpen: false,
-
-    toggle: () => {
-        zk.isOpen = !zk.isOpen;
-        const win = document.getElementById('zk-interface');
-        if(zk.isOpen) win.classList.add('active');
-        else win.classList.remove('active');
-    },
-
-    handleEnter: (e) => {
-        if(e.key === 'Enter') zk.sendMessage();
-    },
-
-    sendMessage: () => {
-        const inputField = document.getElementById('user-input');
-        const text = inputField.value.toLowerCase().trim();
-        if(!text) return;
-
-        // 1. Add User Message
-        zk.addBubble(inputField.value, 'user');
-        inputField.value = '';
-
-        // 2. AI Thinking (Delay)
-        setTimeout(() => {
-            zk.processLogic(text);
-        }, 800);
-    },
-
-    processLogic: (text) => {
-        // Filter products based on current segment ONLY
-        const segmentProducts = products.filter(p => p.segment === app.currentSeg);
-        let match = null;
-
-        // Simple Keyword Matching
-        segmentProducts.forEach(p => {
-            p.tags.forEach(tag => {
-                if(text.includes(tag)) match = p;
-            });
-        });
-
-        if(match) {
-            zk.addBubble(`Saya menyarankan <b>${match.name}</b>. Karena anda mencari nuansa "${text}".`, 'bot');
-        } else {
-            zk.addBubble(`Maaf, data spesifik "${text}" tidak ditemukan di segmen ${app.currentSeg}. Coba kata kunci lain seperti: Fresh, Sweet, atau Woody.`, 'bot');
-        }
-    },
-
-    addBubble: (html, type) => {
-        const chatLog = document.getElementById('zk-chat-log');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.innerHTML = html;
-        chatLog.appendChild(div);
-        chatLog.scrollTop = chatLog.scrollHeight; // Auto scroll down
-    }
-};
-
-// Start App
-app.init();
+#loader { position: fixed; inset: 0; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+.menu-layer { position: fixed; inset: 0; background: var(--bg-color); z-index: 2000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
+.menu-layer.active { transform: translateY(0); }
+.close-menu-btn { position: absolute; top: 30px; right: 30px; font-size: 32px; cursor: pointer; }
+.menu-links a { display: block; font-family: var(--font-heading); font-size: 2.5rem; color: var(--text-dim); text-decoration: none; margin: 15px 0; transition: 0.3s; }
+.menu-links a:hover { color: var(--text-main); transform: translateX(10px); }
