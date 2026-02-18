@@ -1,179 +1,143 @@
-// --- DATABASE ---
-const products = [
-    { id: 'm1', name: "ZETKA ALPHA", segment: "man", desc: "Dominasi dalam botol. Oud & Leather.", stats: { longevity: 90, sillage: 80, unique: 70 }, zkReason: "Aura Alpha. Base notes Leather sangat dominan.", tags: ["woody", "leather"] },
-    { id: 'm2', name: "BLUE HORIZON", segment: "man", desc: "Kesegaran laut & Citrus.", stats: { longevity: 60, sillage: 70, unique: 50 }, zkReason: "Mood booster instan untuk produktivitas.", tags: ["fresh", "citrus"] },
-    { id: 'w1', name: "VELVET ROSE", segment: "woman", desc: "Mawar hitam & Vanilla.", stats: { longevity: 85, sillage: 90, unique: 80 }, zkReason: "Kombinasi Seductive. Sangat memikat.", tags: ["floral", "sweet"] },
-    { id: 'w2', name: "PURE BLANC", segment: "woman", desc: "Clean Laundry & Musk.", stats: { longevity: 50, sillage: 40, unique: 60 }, zkReason: "Kesan bersih dan profesional.", tags: ["fresh", "clean"] },
-    { id: 's1', name: "NEON DUST", segment: "street", desc: "Aspal basah & Mint.", stats: { longevity: 70, sillage: 80, unique: 95 }, zkReason: "Futuristik & Niche.", tags: ["edgy", "metallic"] },
-    { id: 's2', name: "GLITCH POP", segment: "street", desc: "Permen karet & Asap.", stats: { longevity: 80, sillage: 85, unique: 90 }, zkReason: "Playful tapi berbahaya.", tags: ["sweet", "party"] }
-];
+/* --- VARIABLES --- */
+:root {
+    --bg-color: #050505;
+    --card-bg: #111;
+    --text-main: #ffffff;
+    --text-dim: #888888;
+    --glass-bg: rgba(5, 5, 5, 0.85);
+    --border-color: rgba(255,255,255,0.1);
+    --accent: #4a90e2; 
+    
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-street: 'Syncopate', sans-serif;
+}
 
-// Map segment ke Index (0, 1, 2) biar tau arah geser
-const segIndex = { 'man': 0, 'woman': 1, 'street': 2 };
+/* LIGHT THEME */
+body.light-theme {
+    --bg-color: #f2f2f7;
+    --card-bg: #ffffff;
+    --text-main: #000000;
+    --text-dim: #666666;
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(0,0,0,0.1);
+}
 
-const app = {
-    currentSeg: 'man',
-    isAnimating: false,
+/* THEME ACCENTS */
+body.theme-man { --accent: #007AFF; }
+body.theme-woman { --accent: #FF2D55; }
+body.theme-street { --accent: #30D158; --bg-color: #000; }
 
-    init: () => {
-        // Load Theme
-        if(localStorage.getItem('theme') === 'light') {
-            document.body.classList.add('light-theme');
-            document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
-        }
-        
-        setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
-        app.renderContent('man', false); // Render awal tanpa animasi
-    },
+* { box-sizing: border-box; transition: background-color 0.4s ease, color 0.3s ease; }
+body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-body); margin: 0; overflow-x: hidden; }
 
-    setSegment: (newSeg) => {
-        if (app.currentSeg === newSeg || app.isAnimating) return;
-        app.isAnimating = true;
+/* LOGO & UTILS */
+.nav-logo { height: 35px; width: auto; object-fit: contain; }
+.loader-logo { height: 60px; width: auto; margin-bottom: 20px; }
+.fallback-logo { display: none; font-family: var(--font-heading); letter-spacing: 5px; font-size: 2rem; }
 
-        // Tentukan Arah: 
-        // Kalau Index Baru > Index Lama = Geser ke KIRI (Konten masuk dari Kanan)
-        // Kalau Index Baru < Index Lama = Geser ke KANAN (Konten masuk dari Kiri)
-        const direction = segIndex[newSeg] > segIndex[app.currentSeg] ? 'next' : 'prev';
-        const wrapper = document.getElementById('content-wrapper');
+/* NAV */
+.glass-nav {
+    position: fixed; top: 0; width: 100%; padding: 15px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color); z-index: 100;
+}
+.nav-actions { display: flex; gap: 20px; align-items: center; }
+.theme-toggle { background: none; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; }
 
-        // 1. Animasi Keluar (Slide Out)
-        const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
-        wrapper.classList.add('flow-animate', outClass);
+/* SEGMENT BUTTONS */
+.segment-control button {
+    background: none; border: none; color: var(--text-dim);
+    font-family: var(--font-heading); font-weight: 600; font-size: 0.85rem;
+    margin: 0 10px; cursor: pointer; position: relative; padding-bottom: 5px;
+}
+.segment-control button.active { color: var(--text-main); }
+.segment-control button::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
+    background: var(--accent); transition: 0.3s ease; transform: translateX(-50%);
+}
+.segment-control button.active::after { width: 100%; }
 
-        // 2. Tunggu animasi selesai, baru ganti konten
-        setTimeout(() => {
-            app.currentSeg = newSeg;
-            
-            // Update Tombol Navigasi
-            document.querySelectorAll('.segment-control button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${newSeg}`).classList.add('active');
-            
-            // Update Tema Warna
-            document.body.className = `theme-${newSeg} ${localStorage.getItem('theme') === 'light' ? 'light-theme' : ''}`;
+/* MAIN LAYOUT */
+main { padding: 120px 40px 40px; max-width: 1400px; margin: 0 auto; overflow: hidden; min-height: 100vh; }
+#content-wrapper { width: 100%; position: relative; }
 
-            // Reset Animasi Class
-            wrapper.classList.remove(outClass);
-            
-            // Render Konten Baru
-            app.renderContent(newSeg, true);
+#hero-title {
+    font-family: var(--font-heading); font-size: 3.5rem; margin: 0; line-height: 1.1;
+    color: var(--text-main); letter-spacing: -1px;
+}
+#hero-desc { margin-top: 10px; font-size: 1.2rem; color: var(--text-dim); }
 
-            // 3. Animasi Masuk (Slide In)
-            const inClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
-            wrapper.classList.add(inClass);
+/* GRID */
+#grid-container {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;
+}
+.product-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 16px; padding: 15px; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s ease;
+}
+.product-card:hover { transform: scale(1.02); border-color: var(--accent); }
+.card-img { height: 220px; background: #222; border-radius: 12px; margin-bottom: 15px; background-size: cover; background-position: center; }
 
-            // Bersihkan class setelah animasi masuk selesai
-            setTimeout(() => {
-                wrapper.classList.remove('flow-animate', inClass);
-                app.isAnimating = false;
-            }, 500);
+/* ZK CHAT */
+.zk-window { background: var(--card-bg); color: var(--text-main); border-color: var(--border-color); border-radius: 18px; position: fixed; bottom: 90px; right: 30px; width: 320px; height: 400px; display: none; flex-direction: column; z-index: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+.zk-window.active { display: flex; animation: fadeUp 0.3s ease; }
+.zk-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-weight: bold; }
+.zk-body { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; }
+.zk-input { display: flex; padding: 10px; border-top: 1px solid var(--border-color); }
+.zk-input input { flex: 1; background: transparent; border: none; color: var(--text-main); outline: none; }
+.zk-input button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; }
+.zk-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--text-main); color: var(--bg-color); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 499;}
 
-        }, 400); // Waktu animasi keluar (sesuai CSS 0.4s-0.5s)
-    },
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 999; display: none; justify-content: center; align-items: center; }
+.modal-card { background: var(--card-bg); width: 90%; max-width: 900px; height: 80vh; border-radius: 24px; display: flex; overflow: hidden; border: 1px solid var(--border-color); position: relative; }
+.close-modal { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.modal-split { display: flex; width: 100%; height: 100%; }
+.modal-visual, .modal-info { width: 50%; padding: 30px; }
+.modal-visual { background: #000; display: flex; align-items: center; justify-content: center; }
+.img-box { width: 100%; height: 100%; background: #333; background-size: cover; background-position: center; border-radius: 12px; }
+.modal-info { overflow-y: auto; }
+.bar-track { width: 100%; background: #333; height: 4px; border-radius: 2px; margin-top: 5px; }
+.bar-fill { height: 100%; background: var(--text-main); width: 0%; transition: width 1s ease; }
+.stat-row { margin-bottom: 15px; } .stat-label { display: flex; justify-content: space-between; font-size: 0.8rem; }
+.ai-note { margin-top: 20px; padding: 15px; background: rgba(125,125,125,0.1); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 0.9rem; }
 
-    renderContent: (seg, animateItems) => {
-        // Update Hero Text
-        const textMap = {
-            man: { t: "PROFESSIONAL<br>COLLECTION", d: "Curated for the modern gentleman." },
-            woman: { t: "ELEGANCE<br>REDEFINED", d: "Scent that whispers class." },
-            street: { t: "URBAN<br>GLITCH_MODE", d: "Break the rules. Smell distinct." }
-        };
-        document.getElementById('hero-title').innerHTML = textMap[seg].t;
-        document.getElementById('hero-desc').innerText = textMap[seg].d;
+/* MENU */
+.menu-layer { position: fixed; inset: 0; background: var(--bg-color); z-index: 2000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
+.menu-layer.active { transform: translateY(0); }
+.menu-content { text-align: center; }
+.close-menu-btn { position: absolute; top: 30px; right: 30px; font-size: 32px; cursor: pointer; }
+.menu-links a { display: block; font-family: var(--font-heading); font-size: 2.5rem; color: var(--text-dim); text-decoration: none; margin: 15px 0; transition: 0.3s; }
+.menu-links a:hover { color: var(--text-main); transform: translateX(10px); }
 
-        // Render Grid
-        const grid = document.getElementById('grid-container');
-        grid.innerHTML = '';
-        
-        const filtered = products.filter(p => p.segment === seg);
-        filtered.forEach((p, idx) => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            if(animateItems) card.style.animationDelay = `${idx * 0.1}s`; // Stagger delay
-            if(animateItems) card.classList.add('stagger-item');
-            
-            card.innerHTML = `
-                <div class="card-img" style="background-image: url('assets/prod-${p.id}.jpg')"></div>
-                <div class="card-meta"><h3>${p.name}</h3><p>${p.desc}</p></div>
-            `;
-            card.onclick = () => ui.openModal(p);
-            grid.appendChild(card);
-        });
+/* PRELOADER */
+#loader { position: fixed; inset: 0; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column;}
+.loading-bar { width: 150px; height: 2px; background: #333; margin-top: 20px; overflow: hidden; }
+.progress { width: 0%; height: 100%; background: var(--text-main); animation: load 1.5s forwards; }
+@keyframes load { to { width: 100%; } }
 
-        zk.resetChat();
-    }
-};
+/* ANIMATIONS (APPLE FLOW) */
+.slide-out-left { animation: slideOutLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.slide-out-right { animation: slideOutRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.slide-in-left { animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
-const ui = {
-    toggleTheme: () => {
-        const body = document.body;
-        body.classList.toggle('light-theme');
-        const isLight = body.classList.contains('light-theme');
-        const icon = document.getElementById('theme-icon');
-        
-        if(isLight) {
-            icon.classList.replace('ph-moon', 'ph-sun');
-            localStorage.setItem('theme', 'light');
-        } else {
-            icon.classList.replace('ph-sun', 'ph-moon');
-            localStorage.setItem('theme', 'dark');
-        }
-        // Force re-apply segment theme color fix
-        body.className = `theme-${app.currentSeg} ${isLight ? 'light-theme' : ''}`;
-    },
-    toggleMenu: () => document.getElementById('main-menu').classList.toggle('active'),
-    openModal: (p) => {
-        document.getElementById('modal-name').innerText = p.name;
-        document.getElementById('modal-desc').innerText = p.desc;
-        document.getElementById('modal-seg-tag').innerText = p.segment.toUpperCase();
-        document.getElementById('modal-zk-note').innerText = p.zkReason;
-        
-        ['long','sillage','unique'].forEach(k => document.getElementById(`bar-${k}`).style.width = '0%');
-        document.getElementById('product-modal').style.display = 'flex';
-        
-        setTimeout(() => {
-            document.getElementById('bar-long').style.width = p.stats.longevity + '%';
-            document.getElementById('bar-sillage').style.width = p.stats.sillage + '%';
-            document.getElementById('bar-unique').style.width = p.stats.unique + '%';
-            document.getElementById('val-long').innerText = p.stats.longevity + '/100';
-            document.getElementById('val-sillage').innerText = p.stats.sillage + '/100';
-            document.getElementById('val-unique').innerText = p.stats.unique + '%';
-        }, 100);
-    },
-    closeModal: () => document.getElementById('product-modal').style.display = 'none'
-};
+@keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOutLeft { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-50px); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(50px); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-const zk = {
-    isOpen: false,
-    toggle: () => {
-        zk.isOpen = !zk.isOpen;
-        document.getElementById('zk-interface').classList.toggle('active', zk.isOpen);
-    },
-    resetChat: () => {
-        const log = document.getElementById('zk-chat-log');
-        log.innerHTML = '';
-        const intro = app.currentSeg === 'street' ? "Yo. Street mode on." : 
-                      app.currentSeg === 'man' ? "Hello Sir. Professional assistance ready." :
-                      "Hello Miss. Looking for elegance?";
-        zk.addBubble(intro, 'bot');
-    },
-    addBubble: (text, type) => {
-        const log = document.getElementById('zk-chat-log');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.style.padding = "8px 12px"; div.style.marginBottom="10px"; div.style.borderRadius="8px";
-        div.style.background = type === 'bot' ? "#333" : "var(--accent)";
-        div.style.color = type === 'bot' ? "#fff" : "#000";
-        div.innerHTML = text;
-        log.appendChild(div);
-    },
-    handleEnter: (e) => { if(e.key === 'Enter') zk.sendMessage(); },
-    sendMessage: () => {
-        const input = document.getElementById('user-input');
-        if(!input.value) return;
-        zk.addBubble(input.value, 'user');
-        setTimeout(() => zk.addBubble("Saya merekomendasikan ZETKA ALPHA.", 'bot'), 1000);
-        input.value = '';
-    }
-};
+.stagger-item { opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
-app.init();
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-split { flex-direction: column; }
+    .modal-visual, .modal-info { width: 100%; }
+    .modal-visual { height: 200px; }
+    .zk-window { width: 90%; right: 5%; bottom: 100px; }
+    #hero-title { font-size: 2.5rem; }
+}
