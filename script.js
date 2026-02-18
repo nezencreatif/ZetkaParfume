@@ -1,12 +1,17 @@
-// --- 1. LINK GAMBAR (DIRECT GOOGLE DRIVE LINKS) ---
-// Pastikan link ini tidak diubah-ubah formatnya
+// --- 1. LINK GAMBAR (DIRECT LINK) ---
 const imgParfum = "https://drive.google.com/uc?export=view&id=1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
-const imgZkLight = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Logo AI Hitam
-const imgZkDark = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl";  // Logo AI Putih
 
-// --- 2. DATABASE PARFUM (METADATA LENGKAP) ---
+// LOGO ZETKA UTAMA
+const imgLogoWhite = "https://drive.google.com/uc?export=view&id=1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Utk Dark Mode
+const imgLogoBlack = "https://drive.google.com/uc?export=view&id=1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Utk Light Mode
+
+// LOGO AI
+const imgAiWhite = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Utk Dark Mode
+const imgAiBlack = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // Utk Light Mode
+
+
+// --- 2. DATABASE PARFUM ---
 const products = [
-    // MAN
     { 
         id: 'm1', name: "ZETKA ALPHA", segment: "man", 
         desc: "Dominasi dalam botol. Oud & Leather.", 
@@ -21,7 +26,6 @@ const products = [
         zkReason: "Mood booster instan. Wangi Citrus-nya bikin fokus kerja naik, seger kayak abis mandi.", 
         tags: ["fresh", "citrus", "laut", "ocean", "siang", "day", "kantor", "work", "gym", "sport", "segar", "cool"] 
     },
-    // WOMAN
     { 
         id: 'w1', name: "VELVET ROSE", segment: "woman", 
         desc: "Mawar hitam & Vanilla.", 
@@ -36,7 +40,6 @@ const products = [
         zkReason: "Definisi 'Clean Girl Aesthetic'. Wangi sopan, bersih, dan profesional buat harian.", 
         tags: ["fresh", "clean", "musk", "siang", "day", "kuliah", "college", "lembut", "soft", "sopan"] 
     },
-    // STREET
     { 
         id: 's1', name: "NEON DUST", segment: "street", 
         desc: "Aspal basah & Mint.", 
@@ -55,7 +58,7 @@ const products = [
 
 const segIndex = { 'man': 0, 'woman': 1, 'street': 2 };
 
-// --- 3. KAMUS GAUL (SLANG DICTIONARY) ---
+// --- 3. KAMUS GAUL ---
 const slangDict = {
     "gw": "saya", "aku": "saya", "gue": "saya", "gua": "saya", "i": "saya",
     "lo": "anda", "lu": "anda", "u": "anda", "you": "anda",
@@ -75,20 +78,18 @@ const app = {
     isAnimating: false,
 
     init: () => {
-        // Cek Tema Tersimpan
         const savedTheme = localStorage.getItem('theme');
-        if(savedTheme === 'light') {
+        const isLight = savedTheme === 'light';
+        
+        if(isLight) {
             document.body.classList.add('light-theme');
             document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
         }
         
-        // Update Logo AI
-        zk.updateLogo(savedTheme === 'light');
-
-        // Hapus Loader
-        setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
+        // SET LOGO AWAL
+        zk.updateLogo(isLight);
         
-        // Render Awal
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
         app.renderContent('man', false);
     },
 
@@ -98,7 +99,6 @@ const app = {
 
         const direction = segIndex[newSeg] > segIndex[app.currentSeg] ? 'next' : 'prev';
         const wrapper = document.getElementById('content-wrapper');
-
         const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
         wrapper.classList.add(outClass);
 
@@ -138,9 +138,9 @@ const app = {
             if(animateItems) card.style.animationDelay = `${idx * 0.1}s`; 
             if(animateItems) card.classList.add('stagger-item');
             
-            // PAKSA PAKE GAMBAR DARI LINK DRIVE
+            // PAKSA SEMUA PRODUK PAKE GAMBAR PARFUM SAMPLE
             card.innerHTML = `
-                <div class="card-img" style="background-image: url('${imgParfum}'), linear-gradient(45deg, #1a1a1a, #333)"></div>
+                <div class="card-img" style="background-image: url('${imgParfum}'); background-size: cover; background-position: center;"></div>
                 <div class="card-meta"><h3>${p.name}</h3><p>${p.desc}</p></div>
             `;
             card.onclick = () => ui.openModal(p);
@@ -167,6 +167,8 @@ const ui = {
         }
         
         body.className = `theme-${app.currentSeg} ${isLight ? 'light-theme' : ''}`;
+        
+        // PANGGIL FUNGSI GANTI LOGO
         zk.updateLogo(isLight);
     },
 
@@ -178,8 +180,8 @@ const ui = {
         document.getElementById('modal-seg-tag').innerText = p.segment.toUpperCase();
         document.getElementById('modal-zk-note').innerText = p.zkReason;
         
-        // GAMBAR MODAL DARI DRIVE
-        document.getElementById('modal-img-placeholder').style.backgroundImage = `url('${imgParfum}'), linear-gradient(45deg, #1a1a1a, #333)`;
+        // GAMBAR MODAL
+        document.getElementById('modal-img-placeholder').style.backgroundImage = `url('${imgParfum}')`;
         
         ['long','sillage','unique'].forEach(k => document.getElementById(`bar-${k}`).style.width = '0%');
         document.getElementById('product-modal').style.display = 'flex';
@@ -194,16 +196,19 @@ const ui = {
     closeModal: () => document.getElementById('product-modal').style.display = 'none'
 };
 
-// --- 6. MR. ZK INTELLIGENCE (AI LOGIC) ---
+// --- 6. MR. ZK INTELLIGENCE (AI) ---
 const zk = {
     isOpen: false,
     
-    // Ganti Logo AI pake Link Drive
+    // FUNGSI GANTI LOGO OTOMATIS
     updateLogo: (isLight) => {
-        const logoImg = document.getElementById('zk-trigger-img');
-        if(logoImg) {
-            logoImg.src = isLight ? imgZkLight : imgZkDark;
-        }
+        // Ganti Logo Navigasi
+        const navLogo = document.getElementById('nav-logo-img');
+        if(navLogo) navLogo.src = isLight ? imgLogoBlack : imgLogoWhite;
+
+        // Ganti Logo AI
+        const aiLogo = document.getElementById('zk-trigger-img');
+        if(aiLogo) aiLogo.src = isLight ? imgAiBlack : imgAiWhite;
     },
 
     toggle: () => {
@@ -222,10 +227,9 @@ const zk = {
         if(!log) return;
         if(!silent) log.innerHTML = '';
         
-        // Persona Greeting
         let intro = "";
-        if (app.currentSeg === 'street') intro = "Yo, Whats up? Masuk mode Street nih. Cari scent yang 'rebel' atau buat 'party'?";
-        else if (app.currentSeg === 'man') intro = "Good day, Sir. Mr. ZK at your service. Butuh saran untuk Meeting atau Daily?";
+        if (app.currentSeg === 'street') intro = "Yo, Whats up? Masuk mode Street. Cari scent yang 'rebel' atau 'party'?";
+        else if (app.currentSeg === 'man') intro = "Good day, Sir. Mr. ZK ready. Butuh saran untuk Meeting atau Daily?";
         else intro = "Hello Miss. Mencari touch of Elegance atau sesuatu yang Sweet?";
 
         if(log.innerHTML === "") zk.addBubble(intro, 'bot');
@@ -263,52 +267,36 @@ const zk = {
     },
 
     processQuery: (rawQuery) => {
-        // Normalisasi Slang
         let query = rawQuery;
         Object.keys(slangDict).forEach(slang => {
             const regex = new RegExp(`\\b${slang}\\b`, 'gi');
             query = query.replace(regex, slangDict[slang]);
         });
 
-        // Basa-basi check
-        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada referensi wangi yang dicari? Misal: 'Buat ngedate' atau 'wangi kayu'?";
+        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada yang bisa saya bantu carikan?";
         if (query.includes('makasih') || query.includes('thx')) return "Siap, sama-sama! Stay fresh.";
 
-        // Matching Logic
         const activeProducts = products.filter(p => p.segment === app.currentSeg);
         let bestMatch = null;
         let highestScore = 0;
 
         activeProducts.forEach(p => {
             let score = 0;
-            p.tags.forEach(tag => { 
-                if (query.includes(tag)) score += 10; 
-            });
+            p.tags.forEach(tag => { if (query.includes(tag)) score += 10; });
             if (p.desc.toLowerCase().includes(query)) score += 5;
-            
-            if (score > highestScore) {
-                highestScore = score;
-                bestMatch = p;
-            }
+            if (score > highestScore) { highestScore = score; bestMatch = p; }
         });
 
         if (highestScore > 0 && bestMatch) {
-            let opening = "";
-            if(app.currentSeg === 'street') opening = "Nah, ini cocok banget buat gaya lo. ";
-            else if(app.currentSeg === 'man') opening = "Pilihan yang sangat solid, Sir. ";
-            else opening = "Pilihan cantik untuk Anda, Miss. ";
-
-            return `${opening}Saya sarankan <b>${bestMatch.name}</b>.<br><br>
-                    <small>🔍 <b>Reasoning:</b> ${bestMatch.zkReason}</small>`;
+            let opening = app.currentSeg === 'street' ? "Nah, ini cocok gaya lo. " : "Saya sarankan ini. ";
+            return `${opening}Pilih <b>${bestMatch.name}</b>.<br><br><small>🔍 ${bestMatch.zkReason}</small>`;
         } else {
             const suggestions = activeProducts[0].tags.slice(0,3).join(", ");
-            return `Hmm, database saya belum punya data spesifik soal "${rawQuery}" di segmen ${app.currentSeg.toUpperCase()}.<br>
-                    Coba kata kunci lain kayak: <i>${suggestions}</i>.`;
+            return `Hmm, coba cari kata lain seperti: <i>${suggestions}</i>.`;
         }
     }
 };
 
-// Start App
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
