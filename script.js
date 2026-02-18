@@ -1,10 +1,16 @@
-// --- 1. LINK GAMBAR (JALUR KHUSUS / PROXY) ---
-// Link ini udah gw convert biar tembus blokiran Google Drive baru
+// --- 1. CONFIG: LINK GAMBAR GOOGLE DRIVE (DIRECT) ---
+// Link ini aman, pake proxy Google
 const imgParfum = "https://lh3.googleusercontent.com/d/1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr"; // Botol Hitam
-const imgLogoWhite = "https://lh3.googleusercontent.com/d/1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Logo ZETKA Putih
-const imgLogoBlack = "https://lh3.googleusercontent.com/d/1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Logo ZETKA Hitam
-const imgAiWhite = "https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // AI Putih
-const imgAiBlack = "https://lh3.googleusercontent.com/d/1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // AI Hitam
+
+// --- LOGIC LOGO (Baca ini baik-baik) ---
+// Kalau Background GELAP (Dark Mode) -> Kita butuh Logo PUTIH biar kelihatan
+const imgLogoForDarkMode = "https://drive.google.com/uc?export=view&id=1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; 
+const imgAiForDarkMode = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU";
+
+// Kalau Background TERANG (Light Mode) -> Kita butuh Logo HITAM biar kelihatan
+const imgLogoForLightMode = "https://drive.google.com/uc?export=view&id=1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; 
+const imgAiForLightMode = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; 
+
 
 // --- 2. DATABASE PARFUM ---
 const products = [
@@ -77,12 +83,19 @@ const app = {
         const savedTheme = localStorage.getItem('theme');
         const isLight = savedTheme === 'light';
         
+        // Setup Tema Awal
         if(isLight) {
             document.body.classList.add('light-theme');
             document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
+        } else {
+            document.body.classList.remove('light-theme');
+            document.getElementById('theme-icon').classList.replace('ph-sun', 'ph-moon');
         }
         
+        // Setup Logo Awal (PENTING!)
         zk.updateLogo(isLight);
+
+        // Hide Preloader
         setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
         app.renderContent('man', false);
     },
@@ -101,6 +114,7 @@ const app = {
             document.querySelectorAll('.segment-control button').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-${newSeg}`).classList.add('active');
             
+            // Re-apply Theme Color (Fix Street Bug)
             const isLight = document.body.classList.contains('light-theme');
             document.body.className = `theme-${newSeg} ${isLight ? 'light-theme' : ''}`;
 
@@ -147,7 +161,9 @@ const app = {
 const ui = {
     toggleTheme: () => {
         const body = document.body;
-        body.classList.toggle('light-theme');
+        body.classList.toggle('light-theme'); // Toggle class
+        
+        // Cek status sekarang (setelah di-toggle)
         const isLight = body.classList.contains('light-theme');
         const icon = document.getElementById('theme-icon');
         
@@ -159,7 +175,10 @@ const ui = {
             localStorage.setItem('theme', 'dark');
         }
         
+        // Fix Segment Colors
         body.className = `theme-${app.currentSeg} ${isLight ? 'light-theme' : ''}`;
+        
+        // PANGGIL UPDATE LOGO DISINI!
         zk.updateLogo(isLight);
     },
 
@@ -185,16 +204,24 @@ const ui = {
     closeModal: () => document.getElementById('product-modal').style.display = 'none'
 };
 
-// --- 6. MR. ZK INTELLIGENCE ---
+// --- 6. MR. ZK INTELLIGENCE (AI) ---
 const zk = {
     isOpen: false,
     
+    // LOGIC TUKAR GAMBAR LOGO OTOMATIS (FIXED)
     updateLogo: (isLight) => {
         const navLogo = document.getElementById('nav-logo-img');
-        if(navLogo) navLogo.src = isLight ? imgLogoBlack : imgLogoWhite;
-
         const aiLogo = document.getElementById('zk-trigger-img');
-        if(aiLogo) aiLogo.src = isLight ? imgAiBlack : imgAiWhite;
+
+        if(isLight) {
+            // Mode Terang -> Pake Logo Hitam
+            if(navLogo) navLogo.src = imgLogoForLightMode;
+            if(aiLogo) aiLogo.src = imgAiForLightMode;
+        } else {
+            // Mode Gelap -> Pake Logo Putih
+            if(navLogo) navLogo.src = imgLogoForDarkMode;
+            if(aiLogo) aiLogo.src = imgAiForDarkMode;
+        }
     },
 
     toggle: () => {
@@ -259,7 +286,7 @@ const zk = {
             query = query.replace(regex, slangDict[slang]);
         });
 
-        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada yang bisa saya bantu carikan?";
+        if (query.includes('halo') || query.includes('hi')) return "Halo! Ada referensi wangi yang dicari? Misal: 'Buat ngedate' atau 'wangi kayu'?";
         if (query.includes('makasih') || query.includes('thx')) return "Siap, sama-sama! Stay fresh.";
 
         const activeProducts = products.filter(p => p.segment === app.currentSeg);
