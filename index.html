@@ -48,3 +48,71 @@
                 <h2 id="hero-title">PROFESSIONAL<br>COLLECTION</h2>
                 <p id="hero-desc">Curated for the modern gentleman.</p>
             </header>
+
+            <section id="grid-container">
+                </section>
+        </div>
+    </main>
+
+    <div class="zk-wrapper">
+        <div id="zk-interface" class="zk-window glass-panel">
+            <div class="zk-header">
+                <span>Mr. ZK (Beta)</span>
+                <i class="ph ph-x" onclick="zk.toggle()"></i>
+            </div>
+            <div class="zk-body" id="zk-chat-log"></div>
+            <div class="zk-input">
+                <input type="text" id="user-input" placeholder="Tanya ZK..." onkeypress="zk.handleEnter(event)">
+                <button onclick="zk.sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
+            </div>
+        </div>
+        
+        <div class="zk-trigger" onclick="zk.toggle()">
+            <img id="zk-trigger-img" src="https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU" alt="ZK AI">
+        </div>
+    </div>
+
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-card glass-panel">
+            <button class="close-modal" onclick="ui.closeModal()"><i class="ph ph-x"></i></button>
+            <div class="modal-split">
+                <div class="modal-visual"><div id="modal-img-placeholder" class="img-box"></div></div>
+                <div class="modal-info">
+                    <small id="modal-seg-tag">MAN COLLECTION</small>
+                    <h1 id="modal-name">ZETKA ALPHA</h1>
+                    <p id="modal-desc">...</p>
+                    <div class="nft-stats">
+                        <div class="stat-row">
+                            <div class="stat-label"><span>Longevity</span><span id="val-long">8h</span></div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-long"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-label"><span>Sillage</span><span id="val-sillage">2m</span></div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-sillage"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-label"><span>Uniqueness</span><span id="val-unique">90%</span></div>
+                            <div class="bar-track"><div class="bar-fill" id="bar-unique"></div></div>
+                        </div>
+                    </div>
+                    <div class="ai-note"><i class="ph ph-sparkle"></i><span id="modal-zk-note">...</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-menu" class="menu-layer">
+        <div class="menu-content">
+            <i class="ph ph-x close-menu-btn" onclick="ui.toggleMenu()"></i>
+            <div class="menu-links">
+                <a href="#">Philosophy</a>
+                <a href="#">Scent Library</a>
+                <a href="#">The Team</a>
+            </div>
+            <p style="margin-top:50px; color:#666;">© 2026 Zetka Parfume.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
