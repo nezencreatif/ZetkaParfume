@@ -1,13 +1,13 @@
-// --- 1. CONFIG: LINK GAMBAR (FORMAT ALTERNATIF ANTI-BLOKIR) ---
-const imgParfum = "https://lh3.googleusercontent.com/d/1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr"; // Botol Parfum
+// --- 1. LINK GAMBAR DRIVE ASLI BOS ZEN ---
+const imgParfum = "https://drive.google.com/uc?export=view&id=1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
 
 // Logo ZETKA
-const imgLogoWhite = "https://lh3.googleusercontent.com/d/1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Utk Dark Mode
-const imgLogoBlack = "https://lh3.googleusercontent.com/d/1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Utk Light Mode
+const imgLogoWhite = "https://drive.google.com/uc?export=view&id=1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Buat Dark Mode (Background Hitam)
+const imgLogoBlack = "https://drive.google.com/uc?export=view&id=1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Buat Light Mode (Background Putih)
 
 // Logo AI
-const imgAiWhite = "https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Utk Dark Mode
-const imgAiBlack = "https://lh3.googleusercontent.com/d/1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // Utk Light Mode
+const imgAiWhite = "https://drive.google.com/uc?export=view&id=14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Buat Dark Mode
+const imgAiBlack = "https://drive.google.com/uc?export=view&id=1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // Buat Light Mode
 
 // --- 2. DATABASE PARFUM ---
 const products = [
@@ -20,11 +20,9 @@ const products = [
 ];
 
 const segIndex = { 'man': 0, 'woman': 1, 'street': 2 };
-
-// --- 3. KAMUS GAUL ---
 const slangDict = { "gw": "saya", "lo": "anda", "wangi": "aroma" };
 
-// --- 4. APP LOGIC ---
+// --- 3. APP LOGIC ---
 const app = {
     currentSeg: 'man',
     isAnimating: false,
@@ -36,6 +34,9 @@ const app = {
         if(isLight) {
             document.body.classList.add('light-theme');
             document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
+        } else {
+            document.body.classList.remove('light-theme');
+            document.getElementById('theme-icon').classList.replace('ph-sun', 'ph-moon');
         }
         
         zk.updateLogo(isLight);
@@ -88,6 +89,7 @@ const app = {
             if(animateItems) card.style.animationDelay = `${idx * 0.1}s`; 
             if(animateItems) card.classList.add('stagger-item');
             
+            // PAKSA GAMBAR PARFUM SAMPLE DARI DRIVE
             card.innerHTML = `
                 <div class="card-img" style="background-image: url('${imgParfum}');"></div>
                 <div class="card-meta"><h3>${p.name}</h3><p>${p.desc}</p></div>
@@ -99,7 +101,7 @@ const app = {
     }
 };
 
-// --- 5. UI CONTROLLER ---
+// --- 4. UI CONTROLLER ---
 const ui = {
     toggleTheme: () => {
         const body = document.body;
@@ -116,6 +118,8 @@ const ui = {
         }
         
         body.className = `theme-${app.currentSeg} ${isLight ? 'light-theme' : ''}`;
+        
+        // Panggil fungsi ganti logo tiap kali tema diubah
         zk.updateLogo(isLight);
     },
 
@@ -141,18 +145,21 @@ const ui = {
     closeModal: () => document.getElementById('product-modal').style.display = 'none'
 };
 
-// --- 6. MR. ZK INTELLIGENCE ---
+// --- 5. MR. ZK INTELLIGENCE ---
 const zk = {
     isOpen: false,
     
+    // --- LOGIKA LOGO YANG BENAR ---
     updateLogo: (isLight) => {
         const navLogo = document.getElementById('nav-logo-img');
         const aiLogo = document.getElementById('zk-trigger-img');
         
         if(isLight) {
+            // Mode Terang (Background Putih) -> Pakai Logo Hitam
             if(navLogo) navLogo.src = imgLogoBlack;
             if(aiLogo) aiLogo.src = imgAiBlack;
         } else {
+            // Mode Gelap (Background Hitam) -> Pakai Logo Putih
             if(navLogo) navLogo.src = imgLogoWhite;
             if(aiLogo) aiLogo.src = imgAiWhite;
         }
