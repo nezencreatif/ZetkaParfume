@@ -2,13 +2,17 @@
 // Menggunakan format lh3.googleusercontent.com dengan ID asli milik Bos Zen
 const imgParfum = "https://lh3.googleusercontent.com/d/1V6cdqjzErsOhJBzxxzEgRIVUo6ka_9kr";
 
-// Logo ZETKA
-const imgLogoWhite = "https://lh3.googleusercontent.com/d/1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j"; // Buat Dark Mode (Background Hitam)
-const imgLogoBlack = "https://lh3.googleusercontent.com/d/1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023"; // Buat Light Mode (Background Putih)
+// --- LOGO ZETKA (LINK VIP) ---
+// Pastikan ini adalah link gambar LOGO HITAM (untuk Light Mode)
+const imgLogoBlack = "https://lh3.googleusercontent.com/d/1L-nrBYKMLmDvqoLCxyB7c5fmbwZJYU3j";
+// Pastikan ini adalah link gambar LOGO PUTIH (untuk Dark Mode)
+const imgLogoWhite = "https://lh3.googleusercontent.com/d/1k4f2SnUQPsNPv4gAgsjRG-TTUXX88023";
 
-// Logo AI Mr. ZK
-const imgAiWhite = "https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU"; // Buat Dark Mode (Background Hitam)
-const imgAiBlack = "https://lh3.googleusercontent.com/d/1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl"; // Buat Light Mode (Background Putih)
+// --- LOGO AI MR. ZK (LINK VIP) ---
+// Pastikan ini adalah link gambar LOGO AI HITAM (untuk Light Mode)
+const imgAiBlack = "https://lh3.googleusercontent.com/d/14RgUGM9m8w3dGJC5PiE3owI1rLyHrsHU";
+// Pastikan ini adalah link gambar LOGO AI PUTIH (untuk Dark Mode)
+const imgAiWhite = "https://lh3.googleusercontent.com/d/1S1lnwjvyiXYpbjntJunRvx3B_0ND1Azl";
 
 // --- 2. DATABASE PARFUM ---
 const products = [
@@ -230,22 +234,19 @@ const ui = {
 const zk = {
     isOpen: false,
     
-    // --- LOGIKA GANTI LOGO OTOMATIS BERDASARKAN TEMA ---
+    // --- LOGIKA GANTI LOGO OTOMATIS YANG SUDAH DIBETULKAN ---
     updateLogo: (isLight) => {
         const navLogo = document.getElementById('nav-logo-img');
         const aiLogo = document.getElementById('zk-trigger-img');
-        const loaderLogo = document.querySelector('.loader-logo');
         
         if(isLight) {
-            // Mode Terang (Background Putih) -> Pakai Logo Hitam agar kontras
+            // Mode Terang (Background Putih) -> Pakai LOGO HITAM
             if(navLogo) navLogo.src = imgLogoBlack;
             if(aiLogo) aiLogo.src = imgAiBlack;
-            if(loaderLogo) loaderLogo.src = imgLogoBlack;
         } else {
-            // Mode Gelap (Background Hitam) -> Pakai Logo Putih agar kontras
+            // Mode Gelap (Background Hitam) -> Pakai LOGO PUTIH
             if(navLogo) navLogo.src = imgLogoWhite;
             if(aiLogo) aiLogo.src = imgAiWhite;
-            if(loaderLogo) loaderLogo.src = imgLogoWhite;
         }
     },
 
